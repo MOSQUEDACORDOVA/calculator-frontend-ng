@@ -1,55 +1,40 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-
-type Operation = '+' | '-' | '*' | '/' | null;
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CalculatorService } from './calculator.service';
+import { HistoryItem, Operator } from './calculator.models';
 
 @Component({
   selector: 'app-calculator',
   templateUrl: './calculator.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatSidenavModule, MatButtonModule, MatIconModule, MatListModule],
+  imports: [MatSidenavModule, MatButtonModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
 })
-export class Calculator {
+export class Calculator implements OnInit {
+  private readonly calculatorService = inject(CalculatorService);
+
   protected readonly firstNumber = signal<string>('');
   protected readonly secondNumber = signal<string>('');
-  protected readonly operation = signal<Operation>(null);
+  protected readonly operation = signal<Operator | null>(null);
   protected readonly hasResult = signal(false);
   protected readonly isHistoryOpen = signal(false);
 
-  // Historial fantasma (placeholder)
-  protected readonly fakeHistory = [
-    { expression: '15 + 7', result: '22' },
-    { expression: '100 ÷ 4', result: '25' },
-    { expression: '8 × 9', result: '72' },
-    { expression: '50 − 18', result: '32' },
-    { expression: '3.14 × 2', result: '6.28' },
-    { expression: '999 + 1', result: '1000' },
-  ];
+  protected readonly history = this.calculatorService.history;
+  protected readonly isLoading = this.calculatorService.isLoading;
+  protected readonly error = this.calculatorService.error;
+  protected readonly loadingTrigger = signal<'=' | Operator | null>(null);
 
-  protected readonly result = computed(() => {
-    const first = parseFloat(this.firstNumber());
-    const second = parseFloat(this.secondNumber());
-    const op = this.operation();
-
-    if (isNaN(first) || isNaN(second) || !op) {
-      return null;
+  protected readonly displayValue = computed(() => {
+    if (this.hasResult()) {
+      return this.firstNumber();
     }
-
-    switch (op) {
-      case '+':
-        return first + second;
-      case '-':
-        return first - second;
-      case '*':
-        return first * second;
-      case '/':
-        return second !== 0 ? first / second : 'Error';
-      default:
-        return null;
-    }
+    const first = this.firstNumber() || '0';
+    const op = this.operationSymbol();
+    const second = this.operation() ? this.secondNumber() : '';
+    return `${first}${op}${second}`;
   });
 
   protected readonly operationSymbol = computed(() => {
@@ -62,6 +47,10 @@ export class Calculator {
       default: return '';
     }
   });
+
+  ngOnInit(): void {
+    this.calculatorService.loadHistory();
+  }
 
   protected onNumberClick(num: string): void {
     if (this.hasResult()) {
@@ -91,13 +80,13 @@ export class Calculator {
     }
   }
 
-  protected onOperationClick(op: Operation): void {
+  protected onOperationClick(op: Operator): void {
     if (this.hasResult()) {
       this.hasResult.set(false);
     }
 
     if (this.firstNumber() && this.secondNumber() && this.operation()) {
-      this.calculate();
+      this.calculateWithTrigger(op);
     }
 
     if (this.firstNumber()) {
@@ -106,16 +95,39 @@ export class Calculator {
   }
 
   protected calculate(): void {
-    if (this.firstNumber() && this.secondNumber() && this.operation()) {
-      const resultValue = this.result();
-      if (resultValue !== null && resultValue !== 'Error') {
-        this.firstNumber.set(String(resultValue));
-        this.secondNumber.set('');
-        this.operation.set(null);
-        this.hasResult.set(true);
-      } else if (resultValue === 'Error') {
-        this.hasResult.set(true);
+    this.calculateWithTrigger('=');
+  }
+
+  private calculateWithTrigger(trigger: '=' | Operator): void {
+    const first = this.firstNumber();
+    const second = this.secondNumber();
+    const op = this.operation();
+
+    if (first && second && op) {
+      const num1 = parseFloat(first);
+      const num2 = parseFloat(second);
+
+      // Validar límites de la API (-999.99 a 999.99)
+      if (num1 < -999.99 || num1 > 999.99 || num2 < -999.99 || num2 > 999.99) {
+        this.error.set('Los números deben estar entre -999.99 y 999.99');
+        return;
       }
+
+      this.loadingTrigger.set(trigger);
+      this.calculatorService.calculate(num1, op, num2).subscribe({
+        next: (response) => {
+          this.firstNumber.set(String(response.data.result));
+          this.secondNumber.set('');
+          this.operation.set(null);
+          this.hasResult.set(true);
+          this.loadingTrigger.set(null);
+        },
+        error: () => {
+          // El error ya se maneja en el servicio
+          this.hasResult.set(true);
+          this.loadingTrigger.set(null);
+        },
+      });
     }
   }
 
@@ -176,5 +188,21 @@ export class Calculator {
 
   protected closeHistory(): void {
     this.isHistoryOpen.set(false);
+  }
+
+  protected clearHistory(): void {
+    this.calculatorService.clearHistory().subscribe();
+  }
+
+  protected useHistoryItem(item: HistoryItem): void {
+    this.firstNumber.set(String(item.result));
+    this.secondNumber.set('');
+    this.operation.set(null);
+    this.hasResult.set(true);
+    this.closeHistory();
+  }
+
+  protected formatExpression(item: HistoryItem): string {
+    return this.calculatorService.formatExpression(item);
   }
 }

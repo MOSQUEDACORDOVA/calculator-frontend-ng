@@ -21,14 +21,21 @@
 
       <!-- History List -->
       <mat-nav-list class="flex-1 overflow-y-auto p-4!">
-        @for (item of fakeHistory; track item.expression) {
-          <button
-            mat-ripple
-            class="w-full text-right p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors cursor-pointer mb-3"
-            aria-label="Usar resultado {{ item.result }}">
-            <div class="text-gray-400 text-sm">{{ item.expression }}</div>
-            <div class="text-white text-xl font-medium">= {{ item.result }}</div>
-          </button>
+        @if (history().length === 0) {
+          <div class="text-gray-400 text-center py-8">
+            No hay operaciones en el historial
+          </div>
+        } @else {
+          @for (item of history(); track item.id) {
+            <button
+              mat-ripple
+              (click)="useHistoryItem(item)"
+              class="w-full text-right p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors cursor-pointer mb-3"
+              aria-label="Usar resultado {{ item.result }}">
+              <div class="text-gray-400 text-sm">{{ formatExpression(item) }}</div>
+              <div class="text-white text-xl font-medium">= {{ item.result }}</div>
+            </button>
+          }
         }
       </mat-nav-list>
 
@@ -36,7 +43,9 @@
       <div class="p-4 border-t border-gray-700">
         <button
           mat-button
-          class="w-full py-3! rounded-lg! bg-gray-800! text-gray-400! hover:bg-gray-700! hover:text-white!"
+          (click)="clearHistory()"
+          [disabled]="history().length === 0"
+          class="w-full py-3! rounded-lg! bg-gray-800! text-gray-400! hover:bg-gray-700! hover:text-white! disabled:opacity-50! disabled:cursor-not-allowed!"
           aria-label="Limpiar historial">
           Limpiar historial
         </button>
@@ -50,13 +59,15 @@
       <div class="w-full max-w-xs" role="application" aria-label="Calculadora">
         <!-- Display -->
         <div class="text-right px-4 pb-4" aria-live="polite" aria-atomic="true">
-          <div class="text-white text-7xl font-light tracking-tight min-h-20">
-            @if (hasResult()) {
-            {{ firstNumber() }}
-            } @else {
-            {{ firstNumber() || '0' }}{{ operationSymbol() }}{{ operation() ? secondNumber() : '' }}
-            }
-          </div>
+          @if (error()) {
+            <div class="text-red-400 text-lg min-h-20 flex items-center justify-end">
+              {{ error() }}
+            </div>
+          } @else {
+            <div class="text-white text-7xl font-light tracking-tight min-h-20">
+              {{ displayValue() }}
+            </div>
+          }
         </div>
 
         <!-- Keypad -->
@@ -92,10 +103,15 @@
         aria-label="Limpiar todo">
         C
       </button>
-      <button (click)="onOperationClick('/')"
-        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+<button (click)="onOperationClick('/')"
+        [disabled]="isLoading()"
+        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors disabled:opacity-70"
         aria-label="Dividir">
-        ÷
+        @if (isLoading() && loadingTrigger() === '/') {
+          <mat-spinner diameter="24" class="white-spinner"></mat-spinner>
+        } @else {
+          ÷
+        }
       </button>
 
       <!-- Row 2 -->
@@ -115,9 +131,14 @@
         9
       </button>
       <button (click)="onOperationClick('*')"
-        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+        [disabled]="isLoading()"
+        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors disabled:opacity-70"
         aria-label="Multiplicar">
-        ×
+        @if (isLoading() && loadingTrigger() === '*') {
+          <mat-spinner diameter="24" class="white-spinner"></mat-spinner>
+        } @else {
+          ×
+        }
       </button>
 
       <!-- Row 3 -->
@@ -137,9 +158,14 @@
         6
       </button>
       <button (click)="onOperationClick('-')"
-        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+        [disabled]="isLoading()"
+        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors disabled:opacity-70"
         aria-label="Restar">
-        −
+        @if (isLoading() && loadingTrigger() === '-') {
+          <mat-spinner diameter="24" class="white-spinner"></mat-spinner>
+        } @else {
+          −
+        }
       </button>
 
       <!-- Row 4 -->
@@ -159,9 +185,14 @@
         3
       </button>
       <button (click)="onOperationClick('+')"
-        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+        [disabled]="isLoading()"
+        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors disabled:opacity-70"
         aria-label="Sumar">
-        +
+        @if (isLoading() && loadingTrigger() === '+') {
+          <mat-spinner diameter="24" class="white-spinner"></mat-spinner>
+        } @else {
+          +
+        }
       </button>
 
       <!-- Row 5 -->
@@ -181,9 +212,14 @@
         .
       </button>
       <button (click)="calculate()"
-            class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+            [disabled]="isLoading()"
+            class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors disabled:opacity-70"
             aria-label="Calcular resultado">
-            =
+            @if (isLoading() && loadingTrigger() === '=') {
+              <mat-spinner diameter="24" class="white-spinner"></mat-spinner>
+            } @else {
+              =
+            }
           </button>
         </div>
       </div>
