@@ -1,168 +1,167 @@
-<mat-card class="calculator" role="application" aria-label="Calculadora">
-  <mat-card-header>
-    <mat-card-title>Calculadora</mat-card-title>
-  </mat-card-header>
-
-  <mat-card-content>
-    <!-- Display Section -->
-    <section class="display" aria-live="polite" aria-atomic="true">
-      <div class="expression" aria-label="Expresión actual">
-        {{ displayExpression() }}
+<div class="min-h-screen bg-black flex items-center justify-center p-4">
+  <div class="w-full max-w-xs" role="application" aria-label="Calculadora">
+    <!-- Display -->
+    <div class="text-right px-4 pb-4" aria-live="polite" aria-atomic="true">
+      <div class="text-white text-7xl font-light tracking-tight min-h-20">
+        @if (hasResult()) {
+          {{ firstNumber() }}
+        } @else {
+          {{ firstNumber() || '0' }}{{ operationSymbol() }}{{ operation() ? secondNumber() : '' }}
+        }
       </div>
+    </div>
 
-      <div class="breakdown">
-        <div class="number-display">
-          <span class="label">Primer número:</span>
-          <span class="value">{{ firstNumber() || '0' }}</span>
-        </div>
+    <!-- Keypad -->
+    <div class="grid grid-cols-4 gap-3" role="group" aria-label="Teclado">
+      <!-- Row 1 -->
+      <button
+        (click)="backspace()"
+        class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
+        aria-label="Borrar dígito"
+      >
+        ⌫
+      </button>
+      <button
+        (click)="clear()"
+        class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
+        aria-label="Limpiar todo"
+      >
+        AC
+      </button>
+      <button
+        (click)="onPercentClick()"
+        class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
+        aria-label="Porcentaje"
+      >
+        %
+      </button>
+      <button
+        (click)="onOperationClick('/')"
+        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+        aria-label="Dividir"
+      >
+        ÷
+      </button>
 
-        <div class="operation-display">
-          <span class="label">Operación:</span>
-          <span class="value">{{ operation() || '-' }}</span>
-        </div>
+      <!-- Row 2 -->
+      <button
+        (click)="onNumberClick('7')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="7"
+      >
+        7
+      </button>
+      <button
+        (click)="onNumberClick('8')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="8"
+      >
+        8
+      </button>
+      <button
+        (click)="onNumberClick('9')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="9"
+      >
+        9
+      </button>
+      <button
+        (click)="onOperationClick('*')"
+        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+        aria-label="Multiplicar"
+      >
+        ×
+      </button>
 
-        <div class="number-display">
-          <span class="label">Segundo número:</span>
-          <span class="value">{{ operation() ? (secondNumber() || '0') : '-' }}</span>
-        </div>
-      </div>
+      <!-- Row 3 -->
+      <button
+        (click)="onNumberClick('4')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="4"
+      >
+        4
+      </button>
+      <button
+        (click)="onNumberClick('5')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="5"
+      >
+        5
+      </button>
+      <button
+        (click)="onNumberClick('6')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="6"
+      >
+        6
+      </button>
+      <button
+        (click)="onOperationClick('-')"
+        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+        aria-label="Restar"
+      >
+        −
+      </button>
 
-      @if (hasResult() || (firstNumber() && secondNumber() && operation())) {
-        <div class="result" aria-label="Resultado">
-          <span class="label">Resultado:</span>
-          <span class="value result-value">{{ result() }}</span>
-        </div>
-      }
-    </section>
+      <!-- Row 4 -->
+      <button
+        (click)="onNumberClick('1')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="1"
+      >
+        1
+      </button>
+      <button
+        (click)="onNumberClick('2')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="2"
+      >
+        2
+      </button>
+      <button
+        (click)="onNumberClick('3')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="3"
+      >
+        3
+      </button>
+      <button
+        (click)="onOperationClick('+')"
+        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+        aria-label="Sumar"
+      >
+        +
+      </button>
 
-    <!-- Keypad Section -->
-    <section class="keypad" role="group" aria-label="Teclado de la calculadora">
-      <div class="keypad-row">
-        <button
-          mat-raised-button
-          color="warn"
-          (click)="clear()"
-          aria-label="Limpiar todo"
-        >
-          C
-        </button>
-        <button
-          mat-raised-button
-          (click)="clearEntry()"
-          aria-label="Borrar entrada"
-        >
-          CE
-        </button>
-        <button
-          mat-raised-button
-          (click)="toggleSign()"
-          aria-label="Cambiar signo"
-        >
-          +/-
-        </button>
-        <button
-          mat-raised-button
-          color="accent"
-          (click)="onOperationClick('/')"
-          [class.active]="operation() === '/'"
-          aria-label="Dividir"
-          aria-pressed="{{ operation() === '/' }}"
-        >
-          ÷
-        </button>
-      </div>
-
-      <div class="keypad-row">
-        <button mat-raised-button (click)="onNumberClick('7')" aria-label="7">
-          7
-        </button>
-        <button mat-raised-button (click)="onNumberClick('8')" aria-label="8">
-          8
-        </button>
-        <button mat-raised-button (click)="onNumberClick('9')" aria-label="9">
-          9
-        </button>
-        <button
-          mat-raised-button
-          color="accent"
-          (click)="onOperationClick('*')"
-          [class.active]="operation() === '*'"
-          aria-label="Multiplicar"
-          aria-pressed="{{ operation() === '*' }}"
-        >
-          ×
-        </button>
-      </div>
-
-      <div class="keypad-row">
-        <button mat-raised-button (click)="onNumberClick('4')" aria-label="4">
-          4
-        </button>
-        <button mat-raised-button (click)="onNumberClick('5')" aria-label="5">
-          5
-        </button>
-        <button mat-raised-button (click)="onNumberClick('6')" aria-label="6">
-          6
-        </button>
-        <button
-          mat-raised-button
-          color="accent"
-          (click)="onOperationClick('-')"
-          [class.active]="operation() === '-'"
-          aria-label="Restar"
-          aria-pressed="{{ operation() === '-' }}"
-        >
-          −
-        </button>
-      </div>
-
-      <div class="keypad-row">
-        <button mat-raised-button (click)="onNumberClick('1')" aria-label="1">
-          1
-        </button>
-        <button mat-raised-button (click)="onNumberClick('2')" aria-label="2">
-          2
-        </button>
-        <button mat-raised-button (click)="onNumberClick('3')" aria-label="3">
-          3
-        </button>
-        <button
-          mat-raised-button
-          color="accent"
-          (click)="onOperationClick('+')"
-          [class.active]="operation() === '+'"
-          aria-label="Sumar"
-          aria-pressed="{{ operation() === '+' }}"
-        >
-          +
-        </button>
-      </div>
-
-      <div class="keypad-row">
-        <button
-          mat-raised-button
-          class="zero-btn"
-          (click)="onNumberClick('0')"
-          aria-label="0"
-        >
-          0
-        </button>
-        <button
-          mat-raised-button
-          (click)="onDecimalClick()"
-          aria-label="Punto decimal"
-        >
-          .
-        </button>
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="calculate()"
-          aria-label="Calcular resultado"
-        >
-          =
-        </button>
-      </div>
-    </section>
-  </mat-card-content>
-</mat-card>
+      <!-- Row 5 -->
+      <button
+        (click)="toggleSign()"
+        class="aspect-square rounded-full bg-gray-700 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="Cambiar signo"
+      >
+        +/−
+      </button>
+      <button
+        (click)="onNumberClick('0')"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="0"
+      >
+        0
+      </button>
+      <button
+        (click)="onDecimalClick()"
+        class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
+        aria-label="Punto decimal"
+      >
+        .
+      </button>
+      <button
+        (click)="calculate()"
+        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+        aria-label="Calcular resultado"
+      >
+        =
+      </button>
+    </div>
+  </div>
+</div>

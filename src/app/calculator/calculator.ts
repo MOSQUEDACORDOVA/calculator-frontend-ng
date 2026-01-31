@@ -1,14 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 
 type Operation = '+' | '-' | '*' | '/' | null;
 
 @Component({
   selector: 'app-calculator',
-  imports: [MatButtonModule, MatCardModule],
   templateUrl: './calculator.html',
-  styleUrl: './calculator.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Calculator {
@@ -40,11 +36,15 @@ export class Calculator {
     }
   });
 
-  protected readonly displayExpression = computed(() => {
-    const first = this.firstNumber() || '0';
-    const op = this.operation() || '';
-    const second = this.operation() ? (this.secondNumber() || '0') : '';
-    return `${first} ${op} ${second}`.trim();
+  protected readonly operationSymbol = computed(() => {
+    const op = this.operation();
+    switch (op) {
+      case '+': return '+';
+      case '-': return '−';
+      case '*': return '×';
+      case '/': return '÷';
+      default: return '';
+    }
   });
 
   protected onNumberClick(num: string): void {
@@ -110,13 +110,17 @@ export class Calculator {
     this.hasResult.set(false);
   }
 
-  protected clearEntry(): void {
-    if (!this.operation()) {
-      this.firstNumber.set('');
-    } else if (!this.secondNumber()) {
+  protected backspace(): void {
+    if (this.hasResult()) {
+      return;
+    }
+
+    if (this.operation() && this.secondNumber()) {
+      this.secondNumber.update((current) => current.slice(0, -1));
+    } else if (this.operation() && !this.secondNumber()) {
       this.operation.set(null);
-    } else {
-      this.secondNumber.set('');
+    } else if (this.firstNumber()) {
+      this.firstNumber.update((current) => current.slice(0, -1));
     }
   }
 
@@ -132,6 +136,20 @@ export class Calculator {
         this.secondNumber.update((current) =>
           current.startsWith('-') ? current.slice(1) : '-' + current
         );
+      }
+    }
+  }
+
+  protected onPercentClick(): void {
+    if (!this.operation()) {
+      if (this.firstNumber()) {
+        const value = parseFloat(this.firstNumber()) / 100;
+        this.firstNumber.set(String(value));
+      }
+    } else {
+      if (this.secondNumber()) {
+        const value = parseFloat(this.secondNumber()) / 100;
+        this.secondNumber.set(String(value));
       }
     }
   }
