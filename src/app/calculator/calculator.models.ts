@@ -39,8 +39,3 @@ export interface DeleteResponse {
   success: boolean;
   message: string;
 }
-
-export interface HealthResponse {
-  status: string;
-  message: string;
-}

@@ -5,7 +5,6 @@ import {
   CalculateRequest,
   CalculateResponse,
   DeleteResponse,
-  HealthResponse,
   HistoryItem,
   HistoryResponse,
   Operator,
@@ -53,31 +52,12 @@ export class CalculatorService {
       .subscribe((data) => this.history.set(Array.isArray(data) ? data : []));
   }
 
-  getHistoryItem(id: number): Observable<HistoryItem | null> {
-    return this.http.get<{ success: boolean; data: HistoryItem }>(`${this.apiUrl}/history/${id}`).pipe(
-      map((response) => response.data),
-      catchError(() => of(null))
-    );
-  }
-
-  deleteHistoryItem(id: number): Observable<boolean> {
-    return this.http.delete<DeleteResponse>(`${this.apiUrl}/history/${id}`).pipe(
-      tap(() => this.loadHistory()),
-      map((response) => response.success),
-      catchError(() => of(false))
-    );
-  }
-
   clearHistory(): Observable<boolean> {
     return this.http.delete<DeleteResponse>(`${this.apiUrl}/history`).pipe(
       tap(() => this.history.set([])),
       map((response) => response.success),
       catchError(() => of(false))
     );
-  }
-
-  checkHealth(): Observable<HealthResponse | null> {
-    return this.http.get<HealthResponse>(`${this.apiUrl}/health`).pipe(catchError(() => of(null)));
   }
 
   getOperatorSymbol(operator: Operator): string {

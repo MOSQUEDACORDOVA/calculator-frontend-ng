@@ -223,20 +223,6 @@ export class Calculator implements OnInit {
     }
   }
 
-  protected onPercentClick(): void {
-    if (!this.operation()) {
-      if (this.firstNumber()) {
-        const value = parseFloat(this.firstNumber()) / 100;
-        this.firstNumber.set(String(value));
-      }
-    } else {
-      if (this.secondNumber()) {
-        const value = parseFloat(this.secondNumber()) / 100;
-        this.secondNumber.set(String(value));
-      }
-    }
-  }
-
   protected toggleHistory(): void {
     this.isHistoryOpen.update(open => !open);
   }
