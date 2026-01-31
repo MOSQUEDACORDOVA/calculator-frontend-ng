@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   // Cambiar esta URL por la URL de producción de tu API
-  apiUrl: '//nvw.d7a.mytemp.website/backend/api',
+  apiUrl: 'https://nvw.d7a.mytemp.website/backend/api',
 };
