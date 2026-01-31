@@ -170,108 +170,73 @@ dist/calculator-frontend-ng/browser/
 └── assets/
 ```
 
-### Despliegue en Diferentes Plataformas
+### Despliegue en cPanel
 
-#### 📦 Servidor Estático (Apache/Nginx)
+#### 📦 Paso 1: Generar Build de Producción
 
 ```bash
-# Build
+# Build optimizado para producción
 ng build --configuration production
-
-# Copiar contenido de dist/calculator-frontend-ng/browser/ al servidor
-scp -r dist/calculator-frontend-ng/browser/* user@server:/var/www/html/
 ```
 
-**Configuración Nginx:**
-```nginx
-server {
-    listen 80;
-    server_name tu-dominio.com;
-    root /var/www/html;
-    index index.html;
+Los archivos compilados estarán en `dist/calculator-frontend-ng/browser/`.
 
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-}
-```
+#### 🌐 Paso 2: Subir Archivos a cPanel
 
-**Configuración Apache (.htaccess):**
+1. **Acceder a cPanel** - Ingresa al panel de control de tu hosting
+2. **Abrir Administrador de Archivos** - Navega a `Administrador de archivos`
+3. **Ir a public_html** - Entra en la carpeta `public_html` (o el subdirectorio donde quieras desplegar)
+4. **Subir archivos** - Sube **todo el contenido** de la carpeta `dist/calculator-frontend-ng/browser/`:
+   - `index.html`
+   - Archivos `.js` (main, polyfills)
+   - Archivos `.css`
+   - Carpeta `assets/` (si existe)
+
+> **💡 Tip:** Puedes comprimir los archivos en un `.zip`, subirlo y extraerlo directamente en cPanel para mayor velocidad.
+
+#### ⚙️ Paso 3: Configurar .htaccess
+
+Crea un archivo `.htaccess` en la misma carpeta donde subiste los archivos (`public_html` o subdirectorio) con el siguiente contenido:
+
 ```apache
-RewriteEngine On
-RewriteBase /
-RewriteRule ^index\.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
 ```
 
-#### ☁️ Vercel
+> **⚠️ Importante:** Si desplegaste en un subdirectorio (ej: `public_html/calculadora/`), ajusta el `RewriteBase`:
+> ```apache
+> RewriteBase /calculadora/
+> ```
+
+#### 🔧 Paso 4: Configurar Base Href (Opcional)
+
+Si la aplicación estará en un subdirectorio, debes compilar con el base href correcto:
 
 ```bash
-# Instalar Vercel CLI
-npm install -g vercel
-
-# Desplegar
-vercel
-
-# Desplegar a producción
-vercel --prod
+# Para subdirectorio /calculadora/
+ng build --configuration production --base-href /calculadora/
 ```
 
-#### 🔥 Firebase Hosting
+#### ✅ Verificación
 
-```bash
-# Instalar Firebase CLI
-npm install -g firebase-tools
+1. Abre tu dominio en el navegador: `https://tu-dominio.com/`
+2. Verifica que la calculadora carga correctamente
+3. Prueba navegar y refrescar la página (el `.htaccess` debe manejar las rutas)
 
-# Login
-firebase login
+#### 🔍 Solución de Problemas Comunes
 
-# Inicializar (seleccionar Hosting)
-firebase init hosting
-
-# Desplegar
-ng build --configuration production
-firebase deploy
-```
-
-#### 🌐 Netlify
-
-```bash
-# Instalar Netlify CLI
-npm install -g netlify-cli
-
-# Build y desplegar
-ng build --configuration production
-netlify deploy --prod --dir=dist/calculator-frontend-ng/browser
-```
-
-#### 🐳 Docker
-
-```dockerfile
-# Dockerfile
-FROM node:20-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-FROM nginx:alpine
-COPY --from=build /app/dist/calculator-frontend-ng/browser /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-```bash
-# Construir imagen
-docker build -t calculator-ng .
-
-# Ejecutar contenedor
-docker run -p 80:80 calculator-ng
-```
+| Problema | Solución |
+|----------|----------|
+| Página en blanco | Verifica que todos los archivos JS/CSS se subieron correctamente |
+| Error 404 al refrescar | Revisa que el `.htaccess` esté configurado correctamente |
+| Rutas no funcionan | Verifica el `RewriteBase` en `.htaccess` |
+| Recursos no cargan | Revisa que el `--base-href` coincida con tu subdirectorio |
 
 ---
 
