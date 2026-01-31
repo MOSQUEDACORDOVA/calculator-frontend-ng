@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CalculatorService } from './calculator.service';
 import { HistoryItem, Operator } from './calculator.models';
 
@@ -11,10 +12,11 @@ import { HistoryItem, Operator } from './calculator.models';
   selector: 'app-calculator',
   templateUrl: './calculator.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatSidenavModule, MatButtonModule, MatIconModule, MatListModule, MatProgressSpinnerModule],
+  imports: [MatSidenavModule, MatButtonModule, MatIconModule, MatListModule, MatProgressSpinnerModule, MatSnackBarModule],
 })
 export class Calculator implements OnInit {
   private readonly calculatorService = inject(CalculatorService);
+  private readonly snackBar = inject(MatSnackBar);
 
   protected readonly firstNumber = signal<string>('');
   protected readonly secondNumber = signal<string>('');
@@ -75,13 +77,32 @@ export class Calculator implements OnInit {
     if (absValue.includes('.')) {
       const [intPart, decPart] = absValue.split('.');
       // Máximo 3 dígitos enteros y 2 decimales
-      if (intPart.length > 3 || decPart.length > 2) return false;
+      if (decPart.length > 2) {
+        this.showValidationAlert('Máximo 2 decimales permitidos');
+        return false;
+      }
+      if (intPart.length > 3) {
+        this.showValidationAlert('El número máximo es 999.99');
+        return false;
+      }
     } else {
       // Máximo 3 dígitos enteros
-      if (absValue.length > 3) return false;
+      if (absValue.length > 3) {
+        this.showValidationAlert('El número máximo es 999.99');
+        return false;
+      }
     }
     
     return this.isValidNumber(newValue);
+  }
+
+  private showValidationAlert(message: string): void {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: ['validation-snackbar']
+    });
   }
 
   protected onNumberClick(num: string): void {

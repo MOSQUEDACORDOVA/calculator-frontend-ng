@@ -11,3 +11,20 @@ button {
 .white-spinner circle {
   stroke: white !important;
 }
+
+/* Validation Snackbar Styles */
+.validation-snackbar {
+  --mdc-snackbar-container-color: #ff5722 !important;
+  --mdc-snackbar-supporting-text-color: white !important;
+  --mat-snack-bar-button-color: white !important;
+}
+
+.validation-snackbar .mdc-snackbar__surface {
+  background-color: #ff5722 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4) !important;
+}
+
+.validation-snackbar .mat-mdc-snack-bar-label {
+  font-weight: 500 !important;
+}
