@@ -112,7 +112,7 @@ export class Calculator {
 
   protected backspace(): void {
     if (this.hasResult()) {
-      return;
+      this.hasResult.set(false);
     }
 
     if (this.operation() && this.secondNumber()) {

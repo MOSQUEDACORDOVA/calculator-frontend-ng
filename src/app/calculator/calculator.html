@@ -14,6 +14,12 @@
     <!-- Keypad -->
     <div class="grid grid-cols-4 gap-3" role="group" aria-label="Teclado">
       <!-- Row 1 -->
+       <button
+        class="aspect-square"
+        aria-label="Borrar dígito"
+      >
+        
+      </button>
       <button
         (click)="backspace()"
         class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
@@ -26,14 +32,7 @@
         class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
         aria-label="Limpiar todo"
       >
-        AC
-      </button>
-      <button
-        (click)="onPercentClick()"
-        class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
-        aria-label="Porcentaje"
-      >
-        %
+        C
       </button>
       <button
         (click)="onOperationClick('/')"
