@@ -32,7 +32,6 @@ Una calculadora elegante con interfaz estilo iOS que incluye:
 - **Componentes Standalone** - Sin NgModules, arquitectura más limpia y moderna
 - **Signals** - Sistema de reactividad moderno de Angular para manejo de estado
 - **OnPush Change Detection** - Optimización de rendimiento con detección de cambios eficiente
-- **Lazy Loading** - Carga diferida de rutas para mejor rendimiento inicial
 
 ### 🎨 Interfaz de Usuario
 - **Angular Material 21** - Componentes UI de alta calidad con tema personalizado
@@ -83,7 +82,7 @@ src/
 │   │   ├── calculator.service.ts  # Servicio de API
 │   │   └── calculator.models.ts   # Interfaces TypeScript
 │   ├── app.config.ts              # Configuración de la aplicación
-│   ├── app.routes.ts              # Rutas con lazy loading
+│   ├── app.html                   # Template raíz
 │   └── app.ts                     # Componente raíz
 ├── environments/
 │   ├── environment.ts             # Configuración desarrollo
@@ -117,7 +116,7 @@ npm install
 npm start
 ```
 
-La aplicación estará disponible en `http://localhost:4200/calculator`
+La aplicación estará disponible en `http://localhost:4200/`
 
 ---
 
@@ -323,7 +322,7 @@ Edita los archivos en `src/environments/` para configurar la URL de tu backend.
 |---------|-------|
 | Bundle inicial | < 500KB (warning) / < 1MB (error) |
 | Estilos por componente | < 4KB (warning) / < 8KB (error) |
-| First Contentful Paint | Optimizado con lazy loading |
+| First Contentful Paint | Optimizado |
 | Change Detection | OnPush para máximo rendimiento |
 
 ---
@@ -334,10 +333,8 @@ Edita los archivos en `src/environments/` para configurar la URL de tu backend.
 - ✅ **Componentes Standalone** - Sin NgModules
 - ✅ **Signals para Estado** - Reactividad moderna
 - ✅ **OnPush Change Detection** - Rendimiento optimizado
-- ✅ **Lazy Loading** - Carga diferida de módulos
 - ✅ **inject()** - Inyección de dependencias moderna
 - ✅ **Control Flow Nativo** - @if, @for, @switch
-- ✅ **Formularios Reactivos** - En lugar de template-driven
 - ✅ **Accesibilidad WCAG AA** - Cumplimiento de estándares
 
 ---
@@ -363,13 +360,3 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 **Desarrollado con ❤️ usando Angular 21**
 
 </div>
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
