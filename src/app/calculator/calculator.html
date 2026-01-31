@@ -1,0 +1,168 @@
+<mat-card class="calculator" role="application" aria-label="Calculadora">
+  <mat-card-header>
+    <mat-card-title>Calculadora</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- Display Section -->
+    <section class="display" aria-live="polite" aria-atomic="true">
+      <div class="expression" aria-label="Expresión actual">
+        {{ displayExpression() }}
+      </div>
+
+      <div class="breakdown">
+        <div class="number-display">
+          <span class="label">Primer número:</span>
+          <span class="value">{{ firstNumber() || '0' }}</span>
+        </div>
+
+        <div class="operation-display">
+          <span class="label">Operación:</span>
+          <span class="value">{{ operation() || '-' }}</span>
+        </div>
+
+        <div class="number-display">
+          <span class="label">Segundo número:</span>
+          <span class="value">{{ operation() ? (secondNumber() || '0') : '-' }}</span>
+        </div>
+      </div>
+
+      @if (hasResult() || (firstNumber() && secondNumber() && operation())) {
+        <div class="result" aria-label="Resultado">
+          <span class="label">Resultado:</span>
+          <span class="value result-value">{{ result() }}</span>
+        </div>
+      }
+    </section>
+
+    <!-- Keypad Section -->
+    <section class="keypad" role="group" aria-label="Teclado de la calculadora">
+      <div class="keypad-row">
+        <button
+          mat-raised-button
+          color="warn"
+          (click)="clear()"
+          aria-label="Limpiar todo"
+        >
+          C
+        </button>
+        <button
+          mat-raised-button
+          (click)="clearEntry()"
+          aria-label="Borrar entrada"
+        >
+          CE
+        </button>
+        <button
+          mat-raised-button
+          (click)="toggleSign()"
+          aria-label="Cambiar signo"
+        >
+          +/-
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="onOperationClick('/')"
+          [class.active]="operation() === '/'"
+          aria-label="Dividir"
+          aria-pressed="{{ operation() === '/' }}"
+        >
+          ÷
+        </button>
+      </div>
+
+      <div class="keypad-row">
+        <button mat-raised-button (click)="onNumberClick('7')" aria-label="7">
+          7
+        </button>
+        <button mat-raised-button (click)="onNumberClick('8')" aria-label="8">
+          8
+        </button>
+        <button mat-raised-button (click)="onNumberClick('9')" aria-label="9">
+          9
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="onOperationClick('*')"
+          [class.active]="operation() === '*'"
+          aria-label="Multiplicar"
+          aria-pressed="{{ operation() === '*' }}"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="keypad-row">
+        <button mat-raised-button (click)="onNumberClick('4')" aria-label="4">
+          4
+        </button>
+        <button mat-raised-button (click)="onNumberClick('5')" aria-label="5">
+          5
+        </button>
+        <button mat-raised-button (click)="onNumberClick('6')" aria-label="6">
+          6
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="onOperationClick('-')"
+          [class.active]="operation() === '-'"
+          aria-label="Restar"
+          aria-pressed="{{ operation() === '-' }}"
+        >
+          −
+        </button>
+      </div>
+
+      <div class="keypad-row">
+        <button mat-raised-button (click)="onNumberClick('1')" aria-label="1">
+          1
+        </button>
+        <button mat-raised-button (click)="onNumberClick('2')" aria-label="2">
+          2
+        </button>
+        <button mat-raised-button (click)="onNumberClick('3')" aria-label="3">
+          3
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="onOperationClick('+')"
+          [class.active]="operation() === '+'"
+          aria-label="Sumar"
+          aria-pressed="{{ operation() === '+' }}"
+        >
+          +
+        </button>
+      </div>
+
+      <div class="keypad-row">
+        <button
+          mat-raised-button
+          class="zero-btn"
+          (click)="onNumberClick('0')"
+          aria-label="0"
+        >
+          0
+        </button>
+        <button
+          mat-raised-button
+          (click)="onDecimalClick()"
+          aria-label="Punto decimal"
+        >
+          .
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="calculate()"
+          aria-label="Calcular resultado"
+        >
+          =
+        </button>
+      </div>
+    </section>
+  </mat-card-content>
+</mat-card>
