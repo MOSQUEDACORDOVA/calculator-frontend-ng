@@ -4,9 +4,9 @@
     <div class="text-right px-4 pb-4" aria-live="polite" aria-atomic="true">
       <div class="text-white text-7xl font-light tracking-tight min-h-20">
         @if (hasResult()) {
-          {{ firstNumber() }}
+        {{ firstNumber() }}
         } @else {
-          {{ firstNumber() || '0' }}{{ operationSymbol() }}{{ operation() ? secondNumber() : '' }}
+        {{ firstNumber() || '0' }}{{ operationSymbol() }}{{ operation() ? secondNumber() : '' }}
         }
       </div>
     </div>
@@ -14,151 +14,126 @@
     <!-- Keypad -->
     <div class="grid grid-cols-4 gap-3" role="group" aria-label="Teclado">
       <!-- Row 1 -->
-       <button
-        class="aspect-square"
-        aria-label="Borrar dígito"
-      >
-        
-      </button>
       <button
-        (click)="backspace()"
         class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
-        aria-label="Borrar dígito"
-      >
-        ⌫
+        aria-label="Borrar dígito">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" color="currentColor"
+          fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M19 10.5V9.99995C19 6.22876 18.9999 4.34311 17.8284 3.17154C16.6568 2 14.7712 2 11 2C7.22889 2 5.34326 2.00006 4.17169 3.17159C3.00015 4.34315 3.00013 6.22872 3.0001 9.99988L3.00006 14.5C3.00003 17.7874 3.00002 19.4312 3.90794 20.5375C4.07418 20.7401 4.25992 20.9258 4.46249 21.0921C5.56883 22 7.21255 22 10.5 22" />
+          <path d="M7 7H15M7 11H11" />
+          <path
+            d="M18 18.5L16.5 17.95V15.5M12 17.5C12 19.9853 14.0147 22 16.5 22C18.9853 22 21 19.9853 21 17.5C21 15.0147 18.9853 13 16.5 13C14.0147 13 12 15.0147 12 17.5Z" />
+        </svg>
       </button>
-      <button
-        (click)="clear()"
+      <button (click)="backspace()"
         class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
-        aria-label="Limpiar todo"
-      >
+        aria-label="Borrar dígito">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" color="currentColor"
+          fill="none" stroke="#fff" stroke-width="1.5">
+          <path
+            d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H13C14.9628 4 15.9443 4 16.7889 4.42229C17.6334 4.84458 18.2223 5.62972 19.4 7.2C21.1333 9.51111 22 10.6667 22 12C22 13.3333 21.1333 14.4889 19.4 16.8C18.2223 18.3703 17.6334 19.1554 16.7889 19.5777C15.9443 20 14.9628 20 13 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z" />
+          <path d="M14 9L8 14.9996M14 15L8 9.00039" />
+        </svg>
+      </button>
+      <button (click)="clear()"
+        class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
+        aria-label="Limpiar todo">
         C
       </button>
-      <button
-        (click)="onOperationClick('/')"
+      <button (click)="onOperationClick('/')"
         class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
-        aria-label="Dividir"
-      >
+        aria-label="Dividir">
         ÷
       </button>
 
       <!-- Row 2 -->
-      <button
-        (click)="onNumberClick('7')"
+      <button (click)="onNumberClick('7')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="7"
-      >
+        aria-label="7">
         7
       </button>
-      <button
-        (click)="onNumberClick('8')"
+      <button (click)="onNumberClick('8')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="8"
-      >
+        aria-label="8">
         8
       </button>
-      <button
-        (click)="onNumberClick('9')"
+      <button (click)="onNumberClick('9')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="9"
-      >
+        aria-label="9">
         9
       </button>
-      <button
-        (click)="onOperationClick('*')"
+      <button (click)="onOperationClick('*')"
         class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
-        aria-label="Multiplicar"
-      >
+        aria-label="Multiplicar">
         ×
       </button>
 
       <!-- Row 3 -->
-      <button
-        (click)="onNumberClick('4')"
+      <button (click)="onNumberClick('4')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="4"
-      >
+        aria-label="4">
         4
       </button>
-      <button
-        (click)="onNumberClick('5')"
+      <button (click)="onNumberClick('5')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="5"
-      >
+        aria-label="5">
         5
       </button>
-      <button
-        (click)="onNumberClick('6')"
+      <button (click)="onNumberClick('6')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="6"
-      >
+        aria-label="6">
         6
       </button>
-      <button
-        (click)="onOperationClick('-')"
+      <button (click)="onOperationClick('-')"
         class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
-        aria-label="Restar"
-      >
+        aria-label="Restar">
         −
       </button>
 
       <!-- Row 4 -->
-      <button
-        (click)="onNumberClick('1')"
+      <button (click)="onNumberClick('1')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="1"
-      >
+        aria-label="1">
         1
       </button>
-      <button
-        (click)="onNumberClick('2')"
+      <button (click)="onNumberClick('2')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="2"
-      >
+        aria-label="2">
         2
       </button>
-      <button
-        (click)="onNumberClick('3')"
+      <button (click)="onNumberClick('3')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="3"
-      >
+        aria-label="3">
         3
       </button>
-      <button
-        (click)="onOperationClick('+')"
+      <button (click)="onOperationClick('+')"
         class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
-        aria-label="Sumar"
-      >
+        aria-label="Sumar">
         +
       </button>
 
       <!-- Row 5 -->
-      <button
-        (click)="toggleSign()"
+      <button (click)="toggleSign()"
         class="aspect-square rounded-full bg-gray-700 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="Cambiar signo"
-      >
+        aria-label="Cambiar signo">
         +/−
       </button>
-      <button
-        (click)="onNumberClick('0')"
+      <button (click)="onNumberClick('0')"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="0"
-      >
+        aria-label="0">
         0
       </button>
-      <button
-        (click)="onDecimalClick()"
+      <button (click)="onDecimalClick()"
         class="aspect-square rounded-full bg-gray-700 text-white text-3xl font-medium flex items-center justify-center hover:bg-gray-600 active:bg-gray-500 transition-colors"
-        aria-label="Punto decimal"
-      >
+        aria-label="Punto decimal">
         .
       </button>
-      <button
-        (click)="calculate()"
+      <button (click)="calculate()"
         class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
-        aria-label="Calcular resultado"
-      >
+        aria-label="Calcular resultado">
         =
       </button>
     </div>
