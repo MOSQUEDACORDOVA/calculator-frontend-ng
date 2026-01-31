@@ -1,22 +1,71 @@
-<div class="min-h-screen bg-black flex items-center justify-center p-4">
-  <div class="w-full max-w-xs" role="application" aria-label="Calculadora">
-    <!-- Display -->
-    <div class="text-right px-4 pb-4" aria-live="polite" aria-atomic="true">
-      <div class="text-white text-7xl font-light tracking-tight min-h-20">
-        @if (hasResult()) {
-        {{ firstNumber() }}
-        } @else {
-        {{ firstNumber() || '0' }}{{ operationSymbol() }}{{ operation() ? secondNumber() : '' }}
+<mat-sidenav-container class="min-h-screen">
+  <!-- History Sidenav -->
+  <mat-sidenav
+    #historySidenav
+    position="end"
+    [opened]="isHistoryOpen()"
+    (closed)="closeHistory()"
+    class="bg-gray-900! w-80">
+    <div class="flex flex-col h-full">
+      <!-- Header -->
+      <div class="flex items-center justify-between p-4 border-b border-gray-700">
+        <h2 class="text-white text-xl font-semibold">Historial</h2>
+        <button
+          mat-icon-button
+          (click)="closeHistory()"
+          aria-label="Cerrar historial"
+          class="text-gray-400! hover:text-white!">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- History List -->
+      <mat-nav-list class="flex-1 overflow-y-auto p-4!">
+        @for (item of fakeHistory; track item.expression) {
+          <button
+            mat-ripple
+            class="w-full text-right p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors cursor-pointer mb-3"
+            aria-label="Usar resultado {{ item.result }}">
+            <div class="text-gray-400 text-sm">{{ item.expression }}</div>
+            <div class="text-white text-xl font-medium">= {{ item.result }}</div>
+          </button>
         }
+      </mat-nav-list>
+
+      <!-- Footer -->
+      <div class="p-4 border-t border-gray-700">
+        <button
+          mat-button
+          class="w-full py-3! rounded-lg! bg-gray-800! text-gray-400! hover:bg-gray-700! hover:text-white!"
+          aria-label="Limpiar historial">
+          Limpiar historial
+        </button>
       </div>
     </div>
+  </mat-sidenav>
 
-    <!-- Keypad -->
-    <div class="grid grid-cols-4 gap-3" role="group" aria-label="Teclado">
+  <!-- Main Content -->
+  <mat-sidenav-content class="bg-black!">
+    <div class="min-h-screen flex items-center justify-center p-4">
+      <div class="w-full max-w-xs" role="application" aria-label="Calculadora">
+        <!-- Display -->
+        <div class="text-right px-4 pb-4" aria-live="polite" aria-atomic="true">
+          <div class="text-white text-7xl font-light tracking-tight min-h-20">
+            @if (hasResult()) {
+            {{ firstNumber() }}
+            } @else {
+            {{ firstNumber() || '0' }}{{ operationSymbol() }}{{ operation() ? secondNumber() : '' }}
+            }
+          </div>
+        </div>
+
+        <!-- Keypad -->
+        <div class="grid grid-cols-4 gap-3" role="group" aria-label="Teclado">
       <!-- Row 1 -->
       <button
+        (click)="toggleHistory()"
         class="aspect-square rounded-full bg-gray-500 text-white text-2xl font-medium flex items-center justify-center hover:bg-gray-400 active:bg-gray-300 transition-colors"
-        aria-label="Borrar dígito">
+        aria-label="Ver historial">
 
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" color="currentColor"
           fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -132,10 +181,12 @@
         .
       </button>
       <button (click)="calculate()"
-        class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
-        aria-label="Calcular resultado">
-        =
-      </button>
+            class="aspect-square rounded-full bg-orange-500 text-white text-3xl font-medium flex items-center justify-center hover:bg-orange-400 active:bg-orange-300 transition-colors"
+            aria-label="Calcular resultado">
+            =
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

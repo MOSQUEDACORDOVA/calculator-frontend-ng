@@ -1,4 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 
 type Operation = '+' | '-' | '*' | '/' | null;
 
@@ -6,12 +10,24 @@ type Operation = '+' | '-' | '*' | '/' | null;
   selector: 'app-calculator',
   templateUrl: './calculator.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatSidenavModule, MatButtonModule, MatIconModule, MatListModule],
 })
 export class Calculator {
   protected readonly firstNumber = signal<string>('');
   protected readonly secondNumber = signal<string>('');
   protected readonly operation = signal<Operation>(null);
   protected readonly hasResult = signal(false);
+  protected readonly isHistoryOpen = signal(false);
+
+  // Historial fantasma (placeholder)
+  protected readonly fakeHistory = [
+    { expression: '15 + 7', result: '22' },
+    { expression: '100 ÷ 4', result: '25' },
+    { expression: '8 × 9', result: '72' },
+    { expression: '50 − 18', result: '32' },
+    { expression: '3.14 × 2', result: '6.28' },
+    { expression: '999 + 1', result: '1000' },
+  ];
 
   protected readonly result = computed(() => {
     const first = parseFloat(this.firstNumber());
@@ -152,5 +168,13 @@ export class Calculator {
         this.secondNumber.set(String(value));
       }
     }
+  }
+
+  protected toggleHistory(): void {
+    this.isHistoryOpen.update(open => !open);
+  }
+
+  protected closeHistory(): void {
+    this.isHistoryOpen.set(false);
   }
 }
