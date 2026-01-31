@@ -2,6 +2,11 @@
 
 @import "tailwindcss";
 
+/* Prevent zoom on double tap/click */
+button {
+  touch-action: manipulation;
+}
+
 /* White spinner for orange buttons */
 .white-spinner circle {
   stroke: white !important;

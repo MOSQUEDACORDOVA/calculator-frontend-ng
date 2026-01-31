@@ -52,15 +52,42 @@ export class Calculator implements OnInit {
     this.calculatorService.loadHistory();
   }
 
+  private isValidNumber(value: string): boolean {
+    if (!value || value === '-') return true;
+    const num = parseFloat(value);
+    return !isNaN(num) && Math.abs(num) <= 999.99;
+  }
+
+  private canAddDigit(current: string, digit: string): boolean {
+    const newValue = current + digit;
+    const isNegative = newValue.startsWith('-');
+    const absValue = isNegative ? newValue.slice(1) : newValue;
+    
+    if (absValue.includes('.')) {
+      const [intPart, decPart] = absValue.split('.');
+      // Máximo 3 dígitos enteros y 2 decimales
+      if (intPart.length > 3 || decPart.length > 2) return false;
+    } else {
+      // Máximo 3 dígitos enteros
+      if (absValue.length > 3) return false;
+    }
+    
+    return this.isValidNumber(newValue);
+  }
+
   protected onNumberClick(num: string): void {
     if (this.hasResult()) {
       this.clear();
     }
 
     if (!this.operation()) {
-      this.firstNumber.update((current) => current + num);
+      if (this.canAddDigit(this.firstNumber(), num)) {
+        this.firstNumber.update((current) => current + num);
+      }
     } else {
-      this.secondNumber.update((current) => current + num);
+      if (this.canAddDigit(this.secondNumber(), num)) {
+        this.secondNumber.update((current) => current + num);
+      }
     }
   }
 
@@ -107,12 +134,6 @@ export class Calculator implements OnInit {
       const num1 = parseFloat(first);
       const num2 = parseFloat(second);
 
-      // Validar límites de la API (-999.99 a 999.99)
-      if (num1 < -999.99 || num1 > 999.99 || num2 < -999.99 || num2 > 999.99) {
-        this.error.set('Los números deben estar entre -999.99 y 999.99');
-        return;
-      }
-
       this.loadingTrigger.set(trigger);
       this.calculatorService.calculate(num1, op, num2).subscribe({
         next: (response) => {
@@ -136,6 +157,7 @@ export class Calculator implements OnInit {
     this.secondNumber.set('');
     this.operation.set(null);
     this.hasResult.set(false);
+    this.error.set(null);
   }
 
   protected backspace(): void {
