@@ -122,7 +122,10 @@ export class Calculator implements OnInit {
     }
 
     if (this.firstNumber() && this.secondNumber() && this.operation()) {
-      this.calculateWithTrigger(op);
+      // Solo calcular si es el mismo operador, si es diferente solo cambiar el operador
+      if (op === this.operation()) {
+        this.calculateWithTrigger(op);
+      }
     }
 
     if (this.firstNumber()) {
