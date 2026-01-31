@@ -48,6 +48,15 @@ export class Calculator implements OnInit {
     }
   });
 
+  protected readonly displayFontSize = computed(() => {
+    const length = this.displayValue().length;
+    if (length <= 6) return 'text-7xl';
+    if (length <= 9) return 'text-5xl';
+    if (length <= 12) return 'text-4xl';
+    if (length <= 15) return 'text-3xl';
+    return 'text-2xl';
+  });
+
   ngOnInit(): void {
     this.calculatorService.loadHistory();
   }

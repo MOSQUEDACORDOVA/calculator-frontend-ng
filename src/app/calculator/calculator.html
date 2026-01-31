@@ -64,7 +64,7 @@
               {{ error() }}
             </div>
           } @else {
-            <div class="text-white text-7xl font-light tracking-tight min-h-20">
+            <div [class]="'text-white font-light tracking-tight min-h-20 flex items-center justify-end ' + displayFontSize()">
               {{ displayValue() }}
             </div>
           }
